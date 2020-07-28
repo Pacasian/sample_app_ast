@@ -5,7 +5,7 @@
     6200EE
     -->
     <color name="colorPrimaryDark">#250E4B</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorAccent">#D4B6F6</color>
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#fff</color>
     <color name="mainColor">#250E4B</color>
     <color name="subMainColor">#D4B6F6</color>

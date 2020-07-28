@@ -21,7 +21,7 @@
         android:layout_height="150dp"
         android:layout_marginLeft="0dp"
         android:layout_marginTop="24dp"
-        app:srcCompat="@drawable/ic_welcome_new2" />
+        app:srcCompat="@drawable/ic_welcome" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -80,6 +80,8 @@
 
 
             <com.google.android.material.textfield.TextInputLayout
+                app:errorEnabled="true"
+                android:id="@+id/til1"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -90,6 +92,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/l_username"
                     android:drawableStart="@drawable/user_login"
                     android:fontFamily="@font/work_sans_medium"
                     android:hint="@string/prompt_username"
@@ -98,15 +101,17 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                app:errorEnabled="true"
+                android:id="@+id/til2"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="30dp">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/password"
+                    android:id="@+id/l_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/key_login"
@@ -122,7 +127,7 @@
 
 
             <Button
-                android:id="@+id/login"
+                android:id="@+id/l_button"
                 android:textColor="#fff"
                 android:background="@drawable/curved_borederless_rectangle"
                 android:layout_width="match_parent"
@@ -157,6 +162,8 @@
 
 
             <com.google.android.material.textfield.TextInputLayout
+                app:errorEnabled="true"
+                android:id="@+id/til3"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
@@ -170,12 +177,15 @@
                     android:drawableStart="@drawable/ic_baseline_alternate_email_24"
                     android:fontFamily="@font/work_sans_medium"
                     android:hint="@string/prompt_email"
+                    android:drawablePadding="10dp"
                     android:inputType="textEmailAddress"
                     android:id="@+id/r_email"
                     android:paddingStart="8dp"
                     tools:ignore="RtlSymmetry" />
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
+                app:errorEnabled="true"
+                android:id="@+id/til4"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
@@ -189,12 +199,15 @@
                     android:drawableStart="@drawable/ic_baseline_person_24"
                     android:fontFamily="@font/work_sans_medium"
                     android:hint="@string/prompt_username"
+                    android:drawablePadding="10dp"
                     android:inputType="textEmailAddress"
                     android:id="@+id/r_username"
                     android:paddingStart="8dp"
                     tools:ignore="RtlSymmetry" />
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
+                app:errorEnabled="true"
+                android:id="@+id/til5"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -210,7 +223,7 @@
                 android:fontFamily="@font/work_sans_medium"
                 android:hint="@string/prompt_password"
                 android:imeOptions="actionDone"
-
+                android:drawablePadding="10dp"
                 android:letterSpacing="0.05"
                 android:paddingStart="8dp"
                 android:selectAllOnFocus="true"
@@ -218,6 +231,8 @@
 
         </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
+                app:errorEnabled="true"
+                android:id="@+id/til6"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
@@ -232,12 +247,12 @@
                     android:drawableStart="@drawable/ic_baseline_vpn_key_24"
                     android:fontFamily="@font/work_sans_medium"
                     android:hint="@string/prompt_c_password"
-                    android:imeOptions="actionDone"
-
+                    android:imeOptions="actionNext"
+                    android:drawablePadding="10dp"
                     android:letterSpacing="0.05"
                     android:paddingStart="8dp"
                     android:selectAllOnFocus="true"
-                    tools:ignore="RtlSymmetry" />
+                   />
 
             </com.google.android.material.textfield.TextInputLayout>
             <Button
