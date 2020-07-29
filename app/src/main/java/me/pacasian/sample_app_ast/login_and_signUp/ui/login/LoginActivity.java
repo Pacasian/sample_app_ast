@@ -1,11 +1,13 @@
 package me.pacasian.sample_app_ast.login_and_signUp.ui.login;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -45,12 +47,18 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Objects;
 
 //import me.pacasian.sample_app_ast.BackgroundWorker;
+import me.pacasian.sample_app_ast.DatabaseConnection;
 import me.pacasian.sample_app_ast.Home.Home;
 import me.pacasian.sample_app_ast.R;
+import me.pacasian.sample_app_ast.SharedPreference;
 
+import static android.widget.Toast.LENGTH_LONG;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -59,6 +67,8 @@ TextInputEditText L_username,L_password, R_username,R_password,R_email,R_con_pas
 TextInputLayout til1,til2,til3,til4,til5,til6;
 TextView txt_login,txt_register;
 LinearLayout layout_login,layout_register;
+Connection con;
+private SharedPreference sharedPref;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,9 +85,9 @@ LinearLayout layout_login,layout_register;
         R_con_pass=findViewById(R.id.r_c_password);
         R_btn=findViewById(R.id.r_Button);
         L_btn=findViewById(R.id.l_button);
-        BadgeView badge = new BadgeView(this, L_btn);
-        badge.setText("2");
-        badge.toggle(true);
+        con=new DatabaseConnection().ConnectDB();
+        sharedPref=SharedPreference.getInstance(getApplicationContext());
+
         til1=findViewById(R.id.til1);
         til2=findViewById(R.id.til2);
         til3=findViewById(R.id.til3);
@@ -90,6 +100,12 @@ LinearLayout layout_login,layout_register;
         til4.setError(null);
         til5.setError(null);
         til6.setError(null);
+        if (con != null) {
+            Toast.makeText(LoginActivity.this, "Connection valid", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(LoginActivity.this, "Connection invalid", Toast.LENGTH_SHORT).show();
+        }
         L_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,8 +120,8 @@ LinearLayout layout_login,layout_register;
                 else{
                     //startActivity(new Intent(LoginActivity.this, Home.class));
                     String type = "login";
-                    BackgroundWorker backgroundWorker = new BackgroundWorker(LoginActivity.this);
-                    backgroundWorker.execute(type, stUser, stPass);
+                    Login login=new Login();
+                    login.execute("");
 
                 }
             }
@@ -129,8 +145,8 @@ LinearLayout layout_login,layout_register;
                 else{
                     if(stPass.equals(stCPass)) {
                         String type = "register";
-                        BackgroundWorker2 backgroundWorker2 = new BackgroundWorker2(LoginActivity.this);
-                        backgroundWorker2.execute(type, stEmail, stUser, stPass);
+                        RegisterUser registerUser=new RegisterUser();
+                        registerUser.execute("");
                     }else{
                         til5.setError("not matching..");
                         til6.setError("not matching..");
@@ -328,159 +344,214 @@ LinearLayout layout_login,layout_register;
             }
         });
     }
-
-    public class BackgroundWorker extends AsyncTask<String,Void,String> {
-        Context context;
-        AlertDialog alertDialog;
-
-
-        public BackgroundWorker(Context ctx) {
-            context = ctx;
-        }
-        @Override
-        protected String doInBackground(String... params) {
-            String type = params[0];
-            String login_url = "http://192.168.1.8/login.php";
-            if(type.equals("login")) {
-                try {
-                    String user_name = params[1];
-                    String password = params[2];
-                    URL url = new URL(login_url);
-                    HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-                    httpURLConnection.setRequestMethod("POST");
-                    httpURLConnection.setDoOutput(true);
-                    httpURLConnection.setDoInput(true);
-                    OutputStream outputStream = httpURLConnection.getOutputStream();
-                    BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-                    String post_data = URLEncoder.encode("user_name","UTF-8")+"="+URLEncoder.encode(user_name,"UTF-8")+"&"
-                            +URLEncoder.encode("password","UTF-8")+"="+URLEncoder.encode(password,"UTF-8");
-                    bufferedWriter.write(post_data);
-                    bufferedWriter.flush();
-                    bufferedWriter.close();
-                    outputStream.close();
-                    InputStream inputStream = httpURLConnection.getInputStream();
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream,"iso-8859-1"));
-                    String result="";
-                    String line="";
-                    while((line = bufferedReader.readLine())!= null) {
-                        result += line;
-                    }
-                    bufferedReader.close();
-                    inputStream.close();
-                    httpURLConnection.disconnect();
-                    return result;
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
-
+    public  class Login extends AsyncTask<String,Integer,String>
+    {
+        String z = "";
+        Boolean isSuccess = false;
+        ProgressDialog progress;
         @Override
         protected void onPreExecute() {
-            alertDialog = new AlertDialog.Builder(context).create();
-            alertDialog.setTitle("Login Status");
+            progress = ProgressDialog.show(LoginActivity.this, "Synchronising",
+                    "Loading! Please Wait...", true);
         }
 
         @Override
-        protected void onPostExecute(String result) {
-
-            System.out.println("result----------------------------------------------------------------");
-            System.out.println(result);
-
-            if(result.equals("Done2")) {
-                startActivity(new Intent(LoginActivity.this, Home.class));
-                finish();
-            }else{
-                alertDialog.setMessage("Failed");
-                alertDialog.show();
+        protected void onPostExecute(String r) {
+            progress.dismiss();
+            if(isSuccess)
+            {
+                //CHECK IF BIO ALREADY FILLED
+                if(r.equals("1")){
+                    Toast.makeText(LoginActivity.this, "Unquies", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Login Successful", LENGTH_LONG).show();
+                    startActivity(new Intent(LoginActivity.this,Home.class));
+                }else{
+                    Toast.makeText(LoginActivity.this,"Login Failed Due to Server error ", Toast.LENGTH_SHORT).show();
+                }
             }
 
         }
 
+        @SuppressLint("SetTextI18n")
         @Override
-        protected void onProgressUpdate(Void... values) {
-            super.onProgressUpdate(values);
+        protected String doInBackground(String... params) {
+            // @SuppressLint("WrongThread") String usernam = userTv.getText().toString();
+            //@SuppressLint("WrongThread") String passwordd = passwordTv.getText().toString();
+
+            try {
+                // Connect to database
+                if (con == null) {
+                    z = "Check Your Internet Access!";
+                } else {
+                    String stPass= Objects.requireNonNull(L_password.getText()).toString();
+                    String stUser= Objects.requireNonNull(L_username.getText()).toString();
+                    String query = "SELECT * FROM userData WHERE username='"+stUser+"' and password ='"+stPass+"';";
+
+                    Statement stmt = con.createStatement();
+                    ResultSet rs = stmt.executeQuery(query);
+
+                    if (rs != null)
+                    {
+                        while (rs.next())
+                        {
+                            try {
+                                String phoneNumber = rs.getString("username");
+                                System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+                                int rows = rs.getRow();
+                                z=rows+"";
+                                System.out.println(rows+"");
+                                System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                        isSuccess = true;
+                    } else {
+                        isSuccess = false;
+                        z="invalid username";
+                    }
+                }
+            } catch (Exception ex) {
+                isSuccess = false;
+                z = ex.getMessage();
+            }
+
+            return z;
+
+
         }
+
     }
-    public class BackgroundWorker2 extends AsyncTask<String,Void,String> {
-        Context context;
-        AlertDialog alertDialog;
-
-
-        public BackgroundWorker2(Context ctx) {
-            context = ctx;
-        }
-        @Override
-        protected String doInBackground(String... params) {
-            String type = params[0];
-            String register_url = "http://192.168.1.8/register.php";
-            if(type.equals("register")) {
-                try {
-                    String user_email = params[1];
-                    String user_name = params[2];
-                    String password = params[3];
-                    URL url = new URL(register_url);
-                    HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-                    httpURLConnection.setRequestMethod("POST");
-                    httpURLConnection.setDoOutput(true);
-                    httpURLConnection.setDoInput(true);
-                    OutputStream outputStream = httpURLConnection.getOutputStream();
-                    BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-                    String post_data = URLEncoder.encode("user_email","UTF-8")+"="+URLEncoder.encode(user_email,"UTF-8")+"&"
-                            +URLEncoder.encode("user_name","UTF-8")+"="+URLEncoder.encode(user_name,"UTF-8")+"&"
-                            +URLEncoder.encode("password","UTF-8")+"="+URLEncoder.encode(password,"UTF-8");
-                    bufferedWriter.write(post_data);
-                    bufferedWriter.flush();
-                    bufferedWriter.close();
-                    outputStream.close();
-                    InputStream inputStream = httpURLConnection.getInputStream();
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream,"iso-8859-1"));
-                    String result="";
-                    String line="";
-                    while((line = bufferedReader.readLine())!= null) {
-                        result += line;
-                    }
-                    bufferedReader.close();
-                    inputStream.close();
-                    httpURLConnection.disconnect();
-                    return result;
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
+    public  class RegisterUser extends AsyncTask<String,Integer,String>
+    {
+        String message = "Can't connect to server, try again";
+        Boolean isSuccess = false;
+        ProgressDialog progress;
 
         @Override
         protected void onPreExecute() {
-            alertDialog = new AlertDialog.Builder(context).create();
-            alertDialog.setTitle("Register Status");
+            progress = ProgressDialog.show(LoginActivity.this, "Synchronising",
+                    "Entering! Please Wait...", true);
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected String doInBackground(String... strings) {
 
-            System.out.println("result----------------------------------------------------------------");
-            System.out.println(result);
+            try
+            {
+                if (con == null)
+                {
+                    message = "Check Your Internet Access!";
+                }
+                else
+                {
+                    String stEmail= Objects.requireNonNull(R_email.getText()).toString();
+                    String stUser= Objects.requireNonNull(R_username.getText()).toString();
+                    String stPass= Objects.requireNonNull(R_password.getText()).toString();
 
-            if(result.equals("Done3")) {
-                alertDialog.setMessage("Success");
-                alertDialog.show();
-            }else{
-                alertDialog.setMessage("Failed");
-                alertDialog.show();
+                    //FOR PUSHING DATA TO bioData
+                    String query =" INSERT INTO userData (email,username,password)VALUES ('"+stEmail+"','"+stUser+"','"+stPass+"') ;";
+                    Statement stmt = con.createStatement();
+                    stmt.executeUpdate(query);
+                    isSuccess=true;
+                }
             }
-
+            catch (Exception ex)
+            {
+                isSuccess = false;
+                message = ex.getMessage();
+            }
+            return message;
         }
 
         @Override
-        protected void onProgressUpdate(Void... values) {
-            super.onProgressUpdate(values);
+        protected void onPostExecute(String s) {
+            progress.dismiss();
+            if(isSuccess)
+            {
+                Toast.makeText(LoginActivity.this , "Data Added Successfully, PLease login Again." , Toast.LENGTH_LONG).show();
+                //sharedPref.putInt("BIOFILLED",1);
+
+            }
+            else
+                Toast.makeText(LoginActivity.this,message, Toast.LENGTH_LONG).show();
         }
+
     }
 }
+/*
+    public  class Login extends AsyncTask<String,Integer,String>
+    {
+        String message = "Can't connect to server, try again";
+        Boolean isSuccess = false;
+        ProgressDialog progress;
+
+        @Override
+        protected void onPreExecute() {
+            progress = ProgressDialog.show(LoginActivity.this, "Synchronising",
+                    "Loading! Please Wait...", true);
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            try
+            {
+
+
+                    String stPass= Objects.requireNonNull(L_password.getText()).toString();
+                    String stUser= Objects.requireNonNull(L_username.getText()).toString();
+                    String query ="SELECT * FROM userData WHERE username='"+stUser+"' and password ='"+stPass+"';";
+                    Statement stmt = con.createStatement();
+                    ResultSet resultSet = stmt.executeQuery(query);
+
+                    if (resultSet != null)
+                    {
+                        while (resultSet.next())
+                        {
+                            try {
+                                String st = resultSet.getString("username");
+                                System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+                                System.out.println(message);
+                                System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+                                System.out.println(ex+"kl");
+                                System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+                            }
+                        }
+                        isSuccess = true;
+                    } else {
+                        isSuccess = false;
+                    }
+
+            }
+            catch (Exception ex)
+            {
+                isSuccess = false;
+                message = ex.getMessage();
+            }
+            return message;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            progress.dismiss();
+            if(isSuccess)
+            {
+                //CHECK IF BIO ALREADY FILLED
+                if(s.equals("1")){
+                    Toast.makeText(LoginActivity.this, "Unquies", Toast.LENGTH_SHORT).show();
+                }else if(s.equals("")){
+                    Toast.makeText(LoginActivity.this, "nothing", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(LoginActivity.this, s+"hai", Toast.LENGTH_SHORT).show();
+                }
+            }
+            else
+                Toast.makeText(LoginActivity.this,message, Toast.LENGTH_LONG).show();
+        }
+
+    }
+ */

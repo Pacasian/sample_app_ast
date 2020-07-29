@@ -11,6 +11,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.readystatesoftware.viewbadger.BadgeView;
+
 import me.pacasian.sample_app_ast.R;
 
 public class Tab1Fragment extends Fragment {
@@ -22,14 +26,19 @@ public class Tab1Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tab1,container,false);
-        btnTEST = (Button) view.findViewById(R.id.btnTEST);
+        FloatingActionButton fab = view.findViewById(R.id.fab);
 
-        btnTEST.setOnClickListener(new View.OnClickListener() {
+
+
+
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "TESTING BUTTON CLICK 1",Toast.LENGTH_SHORT).show();
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
+
 
         return view;
     }

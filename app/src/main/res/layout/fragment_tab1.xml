@@ -1,28 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Home.Tab1Fragment"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <!-- TODO: Update blank fragment layout -->
 
-    <TextView
-
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/container"
+        android:scrollbars="vertical"
+        android:choiceMode="multipleChoice"
+        android:id="@+id/recyclerView" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:textSize="25sp"
-        android:text="Tab1"
-        android:layout_marginTop="100dp"
-        android:id="@+id/textTab1"/>
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_calculate_24px"
+        app:maxImageSize="34dp"
+        app:borderWidth="0dp"
+        />
 
     <Button
+        android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btnTEST"
-        android:text="TESTBTN 1"/>
+        android:text="Button" />
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

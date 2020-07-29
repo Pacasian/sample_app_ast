@@ -34,38 +34,27 @@ Button btn;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        imageButton=findViewById(R.id.ibutton);
+
 
         mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-        setupViewPager(mViewPager);
+        SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
+        adapter.addFragment(new Tab1Fragment(), "Offers");
+        adapter.addFragment(new Tab2Fragment(), "Products");
+        adapter.addFragment(new Tab3Fragment(), "Shops");
+        mViewPager.setAdapter(adapter);
+
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_local_offer_white_24dp);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_products_white_24dp);
+        tabLayout.getTabAt(2).setIcon(R.drawable.ic_storefront_white_24dp);
 
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        BadgeView badge = new BadgeView(this, fab);
-        badge.setText("2");
-        badge.show();
-
-
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
     private void setupViewPager(ViewPager viewPager) {
-        SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(new Tab1Fragment(), "TAB1");
-        adapter.addFragment(new Tab2Fragment(), "TAB2");
-        adapter.addFragment(new Tab3Fragment(), "TAB3");
-        viewPager.setAdapter(adapter);
+
     }
 }

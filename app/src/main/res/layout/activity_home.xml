@@ -11,90 +11,102 @@
         android:layout_gravity="top"
         android:id="@+id/appBar1"
         android:orientation="horizontal"
-        android:gravity="end"
-
+        android:gravity="start"
+        android:weightSum="2"
         android:background="@color/mainColor">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:textSize="25sp"
+            android:gravity="center_vertical"
+            android:textStyle="bold"
+            android:drawablePadding="5dp"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/subMainColor"
+            android:letterSpacing="0.05"
+            android:drawableStart="@drawable/ic_welcome_new2"
+            android:fontFamily="@font/work_sans_medium"
+            android:text="V4U"
+            />
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_margin="12dp"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-
+            android:id="@+id/shoppingCart"
             android:background="@drawable/ic_shopping_cart_white_24dp"
             android:backgroundTint="@color/WhiteColor"
 
             />
-        <ImageButton
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_margin="12dp"
+            android:text="@string/location"
+            android:textColor="@color/WhiteColor"
+            android:paddingStart="10dp"
+            android:fontFamily="@font/work_sans_medium"
+            android:background="@drawable/curved_borderless_colored_rectangle"
+            android:gravity="center_vertical"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            android:background="@drawable/ic_location_on_white_24dp"
-            android:backgroundTint="@color/WhiteColor"
-            android:id="@+id/ibutton"
+            android:drawablePadding="10dp"
+            android:drawableEnd="@drawable/ic_location_on_white_24dp"
+            android:id="@+id/locationTxt"
             />
-<ImageButton
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:layout_margin="12dp"
-    android:scaleType="fitCenter"
-    android:adjustViewBounds="true"
-
-    android:background="@drawable/ic_baseline_person_24"
-    android:backgroundTint="@color/WhiteColor"/>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_margin="12dp"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:id="@+id/accountBtn"
+        android:background="@drawable/ic_baseline_person_24"
+        android:backgroundTint="@color/WhiteColor"/>
     </LinearLayout>
 
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_calculate_24px"
-        app:maxImageSize="34dp"
-        app:borderWidth="0dp"
-        />
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="50dp"
+        android:fontFamily="@font/work_sans_medium"
         app:layout_anchorGravity="center">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/appbar_padding_top"
+            android:fontFamily="@font/work_sans_medium"
+            android:paddingTop="4dp"
             android:theme="@style/AppTheme.AppBarOverlay"
             tools:ignore="MissingConstraints">
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:layout_scrollFlags="scroll|enterAlways"
-                app:popupTheme="@style/AppTheme.PopupOverlay">
-
-            </androidx.appcompat.widget.Toolbar>
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/work_sans_medium" />
 
 
         </com.google.android.material.appbar.AppBarLayout>
+
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+            android:layout_marginTop="70dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appbar" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
